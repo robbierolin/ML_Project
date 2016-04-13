@@ -1,4 +1,6 @@
-colorImage = imread('paper.jpg');
+function [bboxes] = getBoundingBoxes(image)
+
+colorImage = imread(image);
 I = rgb2gray(colorImage);
 
 % Detect MSER regions.
@@ -148,14 +150,30 @@ figure
 imshow(IExpandedBBoxes)
 title('Expanded Bounding Boxes Text')
 
-%%
+%% Filter out subImages
 numBoxes = size(bboxes, 1);
-% imChars = cell(numBoxes);
+subImages = [];
 for i=1:numBoxes
-   bbox = bboxes(i,:);
-   char = imcrop(I, bbox);
-%    imshow(char);
-%    pause;
-   imChars = {imChars( char(:,:)};
+   for j=1:numBoxes
+      if i == j 
+          continue;
+      end
+      xmin1 = xmin(i);
+      xmax1 = xmax(i);
+      ymin1 = ymin(i);
+      ymax1 = ymax(i);
+      
+      xmin2 = xmin(j);
+      xmax2 = xmax(j);
+      ymin2 = ymin(j);
+      ymax2 = ymax(j);
+      
+      if xmin1 > xmin2 && xmax1 < xmax2
+          if ymin1 > ymin2 && ymax1 < ymax2
+              subImages = [subImages(1:end) i];
+          end
+      end 
+   end
 end
-imChars
+
+bboxes(subImages,:) = [];

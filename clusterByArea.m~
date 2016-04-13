@@ -1,0 +1,11 @@
+function [ sizes ] = clusterByArea( bbs, numSizes )
+
+numBoxes = size(bbs, 1);
+areas = zeros(numBoxes, 1);
+
+for i=1:numBoxes
+   areas(i) =  
+end
+
+end
+

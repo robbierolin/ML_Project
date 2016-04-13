@@ -1,3 +1,5 @@
+function [imChars] = getBoundingBoxes()
+
 colorImage = imread('paper.jpg');
 I = rgb2gray(colorImage);
 
@@ -29,33 +31,33 @@ mserConnComp.PixelIdxList = pixelIdxList;
 % Use regionprops to measure MSER properties
 mserStats = regionprops(mserConnComp, 'BoundingBox', 'Eccentricity', ...
     'Solidity', 'Extent', 'Euler', 'Image');
-
-% Compute the aspect ratio using bounding box data.
-bbox = vertcat(mserStats.BoundingBox);
-w = bbox(:,3);
-h = bbox(:,4);
-aspectRatio = w./h;
-
-% Threshold the data to determine which regions to remove. These thresholds
-% may need to be tuned for other images.
-filterIdx = aspectRatio' > 3;
-filterIdx = filterIdx | [mserStats.Eccentricity] > .995 ;
-filterIdx = filterIdx | [mserStats.Solidity] < .3;
-filterIdx = filterIdx | [mserStats.Extent] < 0.2 | [mserStats.Extent] > 0.9;
-filterIdx = filterIdx | [mserStats.EulerNumber] < -4;
-
-% Remove regions
-mserStats(filterIdx) = [];
-mserRegions(filterIdx) = [];
-
-% Show remaining regions
-figure
-imshow(I)
-hold on
-plot(mserRegions, 'showPixelList', true,'showEllipses',false)
-title('After Removing Non-Text Regions Based On Geometric Properties')
-hold off
-
+% 
+% % Compute the aspect ratio using bounding box data.
+% bbox = vertcat(mserStats.BoundingBox);
+% w = bbox(:,3);
+% h = bbox(:,4);
+% aspectRatio = w./h;
+% 
+% % Threshold the data to determine which regions to remove. These thresholds
+% % may need to be tuned for other images.
+% filterIdx = aspectRatio' > 3;
+% filterIdx = filterIdx | [mserStats.Eccentricity] > .995 ;
+% filterIdx = filterIdx | [mserStats.Solidity] < .3;
+% filterIdx = filterIdx | [mserStats.Extent] < 0.2 | [mserStats.Extent] > 0.9;
+% filterIdx = filterIdx | [mserStats.EulerNumber] < -4;
+% 
+% % Remove regions
+% mserStats(filterIdx) = [];
+% mserRegions(filterIdx) = [];
+% 
+% % Show remaining regions
+% figure
+% imshow(I)
+% hold on
+% plot(mserRegions, 'showPixelList', true,'showEllipses',false)
+% title('After Removing Non-Text Regions Based On Geometric Properties')
+% hold off
+% 
 %% Remove Non-Text Regions Based oN Stroke Width Variation
 % Get a binary image of the a region, and pad it to avoid boundary effects
 % during the stroke width computation.
@@ -148,12 +150,30 @@ figure
 imshow(IExpandedBBoxes)
 title('Expanded Bounding Boxes Text')
 
-%%
-% numBoxes = size(bboxes, 1);
-% for i=1:numBoxes
-%    bbox = expandedBBoxes(i,:);
-%    im = colorImage(bbox(3):bbox(1), bbox(4):bbox(2));
-%    imshow(im);
+%% Filter out subImages
+numBoxes = size(bboxes, 1);
+subImages = [];
+for i=1:numBoxes
+   for j=1:numBoxes
+      if i == j 
+          continue;
+      box1 = expandedBBoxes(i,:);
+      box2 = expandedBBoxes(j,:);
+      xmin1
+      
+       
+   end
+end
+
+
+%% Get character images from bounding boxes
+% imChars = cell(numBoxes);
+imChars = {};
+for i=1:numBoxes
+   bbox = bboxes(i,:);
+   char = imcrop(I, bbox);
+%    imshow(char);
 %    pause;
-%     
-% end
+   imChars = {imChars{1:end} char(:,:)};
+end
+imChars
