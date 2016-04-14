@@ -10,7 +10,9 @@ imChars = getCharacterImages(I,bboxes);
 %%
 imChars = normalizeCharacterImages(imChars);
 %%
-[nonLatexText, indeces] = detectCharactersAndDigits(imChars);
+[nonLatexText, nonLatexIndices] = detectCharactersAndDigits(imChars);
+%%
+[LatexText, indicies] = detectLatex(imChars);
 %%
 lines = clusterByYCoord(bboxes, numLines);
 %%
