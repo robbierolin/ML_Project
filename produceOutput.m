@@ -62,7 +62,7 @@ end
 
 beginning = '\begin{document} $';
 
-ending = '$\end{document}';
+ending = '$ \end{document}';
 
 output = strcat(beginning, output, ending);
 end

@@ -1,7 +1,6 @@
-function [bboxes] = getBoundingBoxes(image)
+function [bboxes] = getBoundingBoxes(I)
 
-colorImage = imread(image);
-I = rgb2gray(colorImage);
+
 
 % Detect MSER regions.
 [mserRegions] = detectMSERFeatures(I, ...

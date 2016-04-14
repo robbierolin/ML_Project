@@ -1,10 +1,12 @@
 image = 'test1.jpg'; % Name of image to translate
+colorImage = imread(image);
+I = rgb2gray(colorImage);
 numLines = 2;
 numSizes = 3;
 %%
-bboxes = getBoundingBoxes(image);
+bboxes = getBoundingBoxes(I);
 %%
-imChars = getCharacterImages(bboxes);
+imChars = getCharacterImages(I,bboxes);
 %%
 imChars = normalizeCharacterImages(imChars);
 %%
@@ -13,7 +15,6 @@ imChars = normalizeCharacterImages(imChars);
 lines = clusterByYCoord(bboxes, numLines);
 %%
 sizes = clusterByArea(bboxes, numSizes);
-
 %%
 line1 = imChars(lines == 2, :,:);
 c1 = size(line1, 1);
