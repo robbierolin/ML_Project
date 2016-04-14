@@ -1,4 +1,4 @@
-function [ imChars ] = getCharacterImages( bboxes )
+function [ imChars ] = getCharacterImages( I, bboxes )
 %GETCHARACTERIMAGES Summary of this function goes here
 %   Detailed explanation goes here
 %% Get character images from bounding boxes

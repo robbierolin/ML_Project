@@ -1,6 +1,4 @@
-function [bboxes] = getBoundingBoxes(I)
-
-
+function [bboxes] = getBoundingBoxes(I, colorImage)
 
 % Detect MSER regions.
 [mserRegions] = detectMSERFeatures(I, ...

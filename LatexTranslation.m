@@ -4,7 +4,7 @@ I = rgb2gray(colorImage);
 numLines = 2;
 numSizes = 3;
 %%
-bboxes = getBoundingBoxes(I);
+bboxes = getBoundingBoxes(I, colorImage);
 %%
 imChars = getCharacterImages(I,bboxes);
 %%
