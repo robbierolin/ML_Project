@@ -1,0 +1,69 @@
+function [ output ] = produceOutput(labels, bboxes, lines, sizes )
+
+% State 0: Subscript
+% State 1: Normal size
+% State 2: Superscript
+
+output = '';
+numLines = max(lines);
+
+for line = 1:numLines
+    lineInd = find(lines == line);
+    lineBB = bboxes(lineInd,:);
+    [lineBB, indices] = sortrows(lineBB, 1);
+    
+    for index=indices
+        label = labels(lineInd(index));
+        size = sizes(lineInd(index));
+        if state == 1
+            % Normal -> Normal
+            if size == 1
+                output = strcat(output, label);
+            % Normal -> small
+            elseif size == 0
+                output = strcat(output, '_{', label);
+            % Normal -> big    
+            elseif size == 2
+                output = strcat(output, '^{', label);
+            end
+            
+        elseif state == 0
+            % small -> Normal
+            if size == 1
+                output = strcat(output, '}', label);
+            % small -> small
+            elseif size == 0
+                output = strcat(output, label);
+            % small -> big    
+            elseif size == 2
+                output = strcat(output, '}^{', label);
+            end    
+            
+        elseif state == 2
+            % big -> Normal
+            if size == 1
+                output = strcat(output, '}', label);
+            % big -> small
+            elseif size == 0
+                output = strcat(output, '}_{', label);
+            % small -> big
+            elseif size == 2
+                output = strcat(output, label);
+            end 
+            
+        end
+        state = size;
+    end
+    if state ~= 1
+        output = strcat(output, '}');
+    end
+    output = strcat(output, '\\');   
+end
+
+beginning = '\begin{document} $';
+
+ending = '$\end{document}';
+
+output = strcat(beginning, output, ending);
+end
+

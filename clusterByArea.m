@@ -11,5 +11,17 @@ end
 model = clusterKppMeans(areas, numSizes);
 sizes = model.clusters;
 
+% Order clusters by size
+averageAreas = zeros(1, numSizes);
+for i=1:numSizes
+   averageAreas(i) = mean(areas(find(sizes == i))); 
+end
+
+[averageAreas, indices] = sort(averageAreas);
+
+for i=1:numBoxes
+    sizes(i) = find(indices == sizes(i));
+end
+sizes = sizes - 1;
 end
 

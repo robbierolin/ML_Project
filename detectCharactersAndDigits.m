@@ -10,7 +10,7 @@ for i=1:numChars
     im = reshape(imChars(i,:,:), [imSize imSize]);
     
 %     results = ocr(im);
-    results = ocr(im, 'CharacterSet', '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ().=,', 'TextLayout','Block');
+    results = ocr(im, 'CharacterSet', '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ().=,', 'TextLayout','Word');
     results.Text
     
     % Sort the character confidences

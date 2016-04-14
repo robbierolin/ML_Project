@@ -177,3 +177,15 @@ for i=1:numBoxes
 end
 
 bboxes(subImages,:) = [];
+xmin(subImages) = [];
+xmax(subImages) = [];
+ymin(subImages) = [];
+ymax(subImages) = [];
+
+% Show the expanded bounding boxes
+expandedBBoxes = [xmin ymin xmax-xmin+1 ymax-ymin+1]
+IExpandedBBoxes = insertShape(colorImage,'Rectangle',expandedBBoxes,'LineWidth',3);
+
+figure
+imshow(IExpandedBBoxes)
+title('Expanded Bounding Boxes Text with Contained Boxes Removed')
