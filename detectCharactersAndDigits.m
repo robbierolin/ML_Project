@@ -29,8 +29,8 @@ for i=1:numChars
         end
     end
     
-    imshow(im)
-    pause;
+    %imshow(im)
+    %pause;
 end
 end
 

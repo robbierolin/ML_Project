@@ -2,7 +2,7 @@ function [ imCharsNorm ] = normalizeCharacterImages( imChars )
 
 numImages = size(imChars, 2);
 % Size of training data images is 256 x 256 [not really]
-imSize = 256;
+imSize = 100;
 
 imCharsNorm = zeros(numImages, imSize, imSize);
 

@@ -12,15 +12,9 @@ imChars = normalizeCharacterImages(imChars);
 %%
 [nonLatexText, nonLatexIndices] = detectCharactersAndDigits(imChars);
 %%
-[LatexText, indicies] = detectLatex(imChars);
+[LatexText, indicies] = classifyLatexChars(imChars);
 %%
 lines = clusterByYCoord(bboxes, numLines);
 %%
 sizes = clusterByArea(bboxes, numSizes);
-%%
-line1 = imChars(lines == 2, :,:);
-c1 = size(line1, 1);
-for i=1:c1
-   imshow(squeeze(line1(i,:,:)))
-   pause
-end
+
