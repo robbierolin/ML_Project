@@ -1,7 +1,4 @@
-function [latexText, indicies] = classifyLatexChars (imChars)
-    symbols = csvread('strokes.mtx');
-    labels = csvread('strokes.ind');
-    mdl = fitcknn(symbols, labels, 'Distance', 'euclidean');
+function [latexText, indicies] = classifyLatexChars (mdl, imChars)
     N = size(imChars,1);
     predicted = zeros(N, 1);
     for i=1:N

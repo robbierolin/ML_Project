@@ -12,7 +12,8 @@ imChars = normalizeCharacterImages(imChars);
 %%
 [nonLatexText, nonLatexIndices] = detectCharactersAndDigits(imChars);
 %%
-[LatexText, indicies] = classifyLatexChars(imChars);
+model = trainClassifier();
+[LatexText, indicies] = classifyLatexChars(model, imChars);
 %%
 lines = clusterByYCoord(bboxes, numLines);
 %%
