@@ -12,7 +12,9 @@ imChars = normalizeCharacterImages(imChars);
 %%
 [nonLatexText, nonLatexIndices] = detectCharactersAndDigits(imChars);
 %%
-model = trainClassifier();
+symbols = csvread('training-sets/alpha-beta-lambda/strokes.mtx');
+labels = csvread('training-sets/alpha-beta-lambda/strokes.ind');
+model = trainClassifier(symbols(train,:), labels(train,:));
 [LatexText, indicies] = classifyLatexChars(model, imChars);
 %%
 lines = clusterByYCoord(bboxes, numLines);

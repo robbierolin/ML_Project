@@ -1,6 +1,8 @@
-import requests
-import json
 import itertools
+import json
+import sys
+
+import requests
 
 def convert_to_indicator(li):
     uniq = sorted(set(li))
@@ -13,18 +15,37 @@ def to_symbol(resp):
 
 WIDTH = 100
 HEIGHT = 100
-def to_matrix(resp):
+def to_matrix(resp, interpolate=True):
+    # Initialize the final matrix
     mtx = [[1 for x in range(WIDTH)] for y in range(HEIGHT)]
+    if interpolate:
+        # Add a point between every other two points within a stroke
+        interpolated_strokes = []
+        for stroke in resp['data']:
+            # Zip them together but offset by one then trim endpoints
+            temp = [t for t in zip(stroke, [0] + stroke)]
+            temp = temp[1:len(temp)-1]
+            s = map(lambda s: {'x': (s[0]['x'] + s[1]['x']) / 2,
+                               'y': (s[0]['y'] + s[1]['y']) / 2,
+                               't': (s[0]['t'] + s[1]['t']) / 2},
+                    temp)
+            interpolated_strokes.append(s)
+    else:
+        interpolated_strokes = []
+
+    strokes = resp['data'] + interpolated_strokes
     # Join the different strokes
-    points = itertools.chain(*resp['data'])
+    points = [p for p in itertools.chain(*strokes)]
+    # Sort them by time 
+    points = sorted(points,key=lambda x: x['t'])
     # Find the max and min x/y and then scale to that, rounding 
     # to the nearest pixel
-    p = next(points)
+    p = points[0]
     min_x = p['x']
     max_x = p['x']
     min_y = p['y']
     max_y = p['y']
-    for p in points:
+    for p in points[1:]:
         if p['x'] < min_x:
             min_x = p['x']
         elif p['x'] > max_x:
@@ -37,7 +58,6 @@ def to_matrix(resp):
     range_x = max_x - min_x
     range_y = max_y - min_y
     # Put the points into a matrix
-    points = itertools.chain(*resp['data'])
     for p in points:
         px = round(99 * (p['x'] - min_x) / range_x)
         py = round(99 * (p['y'] - min_y) / range_y)
@@ -47,11 +67,18 @@ def to_matrix(resp):
     return mtx
 
 if __name__ == '__main__':
-    strokes_outfile = open("strokes.mtx", "w")
-    ind_outfile = open("strokes.ind", "w")
-    legend_outfile = open("strokes.legend", "w")
 
-    fhandle = open("sample.json", "r")
+    if len(sys.argv) != 2:
+        sys.exit(1)
+
+    in_filename = sys.argv[1]
+    output_prefix = in_filename.replace('.json','')
+    strokes_outfile = open(output_prefix + '.mtx', 'w')
+    ind_outfile = open(output_prefix + '.ind', 'w')
+    legend_outfile = open(output_prefix + '.legend', 'w')
+
+    fhandle = open(in_filename, "r")
+
     symbols = []
     strokes = []
     for l in fhandle:
@@ -66,5 +93,4 @@ if __name__ == '__main__':
     for ind, stroke in zip(symbol_indicator, strokes):
         ind_outfile.write(str(ind) + '\n')
         strokes_outfile.write(",".join([str(x) for x in itertools.chain(*stroke)]) + '\n')
-
     strokes_outfile.close(); ind_outfile.close(); legend_outfile.close()
