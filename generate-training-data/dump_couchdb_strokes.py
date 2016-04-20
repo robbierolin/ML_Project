@@ -13,9 +13,12 @@ def convert_to_indicator(li):
 def to_symbol(resp):
     return resp['id'].replace("latex2e-OT1-_","")
 
+class NoStrokesError(Exception):
+    pass
+
 WIDTH = 100
 HEIGHT = 100
-def to_matrix(resp, interpolate=True):
+def to_matrix(resp, interpolate=True, thicken=True):
     # Initialize the final matrix
     mtx = [[1 for x in range(WIDTH)] for y in range(HEIGHT)]
     if interpolate:
@@ -33,13 +36,35 @@ def to_matrix(resp, interpolate=True):
     else:
         interpolated_strokes = []
 
+    # Add in the interpolated points
     strokes = resp['data'] + interpolated_strokes
-    # Join the different strokes
     points = [p for p in itertools.chain(*strokes)]
+
+    if thicken:
+        # Add a point between every other two points within a stroke
+        thickened_strokes = []
+        # Zip them together but offset by one then trim endpoints
+        t_points = map(lambda p: [{'x':p['x']+1, 'y':p['y'], 't':p['t']},
+                           {'x':p['x']-1, 'y':p['y'], 't':p['t']},
+                           {'x':p['x'], 'y':p['y']+1, 't':p['t']},
+                           {'x':p['x'], 'y':p['y']-1, 't':p['t']},
+                           {'x':p['x']+1, 'y':p['y']+1, 't':p['t']},
+                           {'x':p['x']+1, 'y':p['y']-1, 't':p['t']},
+                           {'x':p['x']-1, 'y':p['y']+1, 't':p['t']},
+                           {'x':p['x']-1, 'y':p['y']-1, 't':p['t']}],
+                points)
+        points = [p for p in itertools.chain(*t_points)]
+    else:
+        pass
+
     # Sort them by time 
     points = sorted(points,key=lambda x: x['t'])
+
     # Find the max and min x/y and then scale to that, rounding 
     # to the nearest pixel
+    if not points:
+        raise NoStrokesError()
+
     p = points[0]
     min_x = p['x']
     max_x = p['x']
@@ -81,11 +106,20 @@ if __name__ == '__main__':
 
     symbols = []
     strokes = []
-    for l in fhandle:
+    for (idx, l) in enumerate(fhandle):
+        if idx % 1000 == 0:
+            print("Processing {}...".format(idx))
         dat = json.loads(l)
         resp = requests.get("http://localhost:5984/detexify/{}".format(dat['id'])).json()
-        symbols.append(to_symbol(resp))
-        strokes.append(to_matrix(resp))
+        try:
+            symbol = to_symbol(resp)
+            mtx = to_matrix(resp)
+        except Exception as e:
+            print(e)
+            continue
+        else:
+            symbols.append(symbol)
+            strokes.append(mtx)
 
     # Convert the symbols into an indicator matrix
     symbol_indicator, lookup = convert_to_indicator(symbols)
