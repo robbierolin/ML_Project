@@ -8,7 +8,7 @@ function [preds] = KNNDTWPrediction(training, labels, test)
         N = length(training);
         D = zeros(N,1);
         for j=1:N 
-         D(j) = dtw(training{j}, t);
+            D(j) = dtw(training{j}, t);
         end
     
         [~, ind] = sort(D, 'ascend');
