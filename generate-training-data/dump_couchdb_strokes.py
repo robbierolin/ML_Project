@@ -16,8 +16,8 @@ def to_symbol(resp):
 class NoStrokesError(Exception):
     pass
 
-WIDTH = 100
-HEIGHT = 100
+WIDTH = 16
+HEIGHT = 16
 def to_matrix(resp, interpolate=True, thicken=True):
     # Initialize the final matrix
     mtx = [[1 for x in range(WIDTH)] for y in range(HEIGHT)]
@@ -84,8 +84,8 @@ def to_matrix(resp, interpolate=True, thicken=True):
     range_y = max_y - min_y
     # Put the points into a matrix
     for p in points:
-        px = round(99 * (p['x'] - min_x) / range_x)
-        py = round(99 * (p['y'] - min_y) / range_y)
+        px = round(15 * (p['x'] - min_x) / range_x)
+        py = round(15 * (p['y'] - min_y) / range_y)
         mtx[px][py] = 0
 
     # Collapse into one big vector
