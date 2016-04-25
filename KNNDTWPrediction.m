@@ -14,5 +14,6 @@ function [preds] = KNNDTWPrediction(training, labels, test)
         [~, ind] = sort(D, 'ascend');
         best_match_idx = ind(1:3);
         preds(i) = mode(labels(best_match_idx)); 
+    end
 end
 

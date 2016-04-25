@@ -23,7 +23,7 @@ for i=1:numChars
     numAnswers = size(confNaNsRemoved, 1);
     if numAnswers ~= 0 
         if confNaNsRemoved(1) > ConfidenceThreshold
-            labels = [labels results.Text];
+            labels = [labels results.Text(1)];
             indeces = [indeces i];
             confNaNsRemoved(1)
         end
